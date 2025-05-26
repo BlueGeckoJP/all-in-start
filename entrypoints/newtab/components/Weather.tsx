@@ -1,3 +1,17 @@
+import {
+  faCloud,
+  faCloudSun,
+  faCloudSunRain,
+  faQuestionCircle,
+  faSnowflake,
+  faSpinner,
+  faSun, // Added for default icon
+  IconDefinition,
+} from "@fortawesome/free-solid-svg-icons";
+import { faCloudRain } from "@fortawesome/free-solid-svg-icons/faCloudRain";
+import { faSmog } from "@fortawesome/free-solid-svg-icons/faSmog";
+import Fa from "solid-fa";
+
 interface WeatherData {
   current: {
     time: string;
@@ -17,47 +31,60 @@ interface WeatherInfo {
   todayMaxTemp: number;
   todayMinTemp: number;
   time: string;
+  icon: IconDefinition;
 }
 
-function getWeatherDescription(code: number): string {
-  const weatherCodes: { [key: number]: string } = {
-    0: "Clear sky",
-    1: "Mainly clear",
-    2: "Partly cloudy",
-    3: "Overcast",
-    45: "Fog",
-    48: "Depositing rime fog",
-    51: "Drizzle: Light intensity",
-    53: "Drizzle: Moderate intensity",
-    55: "Drizzle: Dense intensity",
-    56: "Freezing Drizzle: Light intensity",
-    57: "Freezing Drizzle: Dense intensity",
-    61: "Rain: Slight intensity",
-    63: "Rain: Moderate intensity",
-    65: "Rain: Heavy intensity",
-    66: "Freezing Rain: Light intensity",
-    67: "Freezing Rain: Heavy intensity",
-    71: "Snow fall: Slight intensity",
-    73: "Snow fall: Moderate intensity",
-    75: "Snow fall: Heavy intensity",
-    77: "Snow grains",
-    80: "Rain showers: Slight intensity",
-    81: "Rain showers: Moderate intensity",
-    82: "Rain showers: Violent intensity",
-    85: "Snow showers slight",
-    86: "Snow showers heavy",
-    95: "Thunderstorm: Slight or moderate",
-    96: "Thunderstorm with slight hail",
-    99: "Thunderstorm with heavy hail",
+function getWeatherDescription(code: number): {
+  weather: string;
+  icon: IconDefinition;
+} {
+  const weatherCodes: {
+    [key: number]: { weather: string; icon: IconDefinition };
+  } = {
+    0: { weather: "Clear sky", icon: faSun },
+    1: { weather: "Mainly clear", icon: faCloudSun },
+    2: { weather: "Partly cloudy", icon: faCloudSunRain },
+    3: { weather: "Overcast", icon: faCloud },
+    45: { weather: "Fog", icon: faSmog },
+    48: { weather: "Depositing rime fog", icon: faSmog },
+    51: { weather: "Drizzle: Light intensity", icon: faCloudRain },
+    53: { weather: "Drizzle: Moderate intensity", icon: faCloudRain },
+    55: { weather: "Drizzle: Dense intensity", icon: faCloudRain },
+    56: { weather: "Freezing Drizzle: Light intensity", icon: faCloudRain },
+    57: { weather: "Freezing Drizzle: Dense intensity", icon: faCloudRain },
+    61: { weather: "Rain: Slight intensity", icon: faCloudRain },
+    63: { weather: "Rain: Moderate intensity", icon: faCloudRain },
+    65: { weather: "Rain: Heavy intensity", icon: faCloudRain },
+    66: { weather: "Freezing Rain: Light intensity", icon: faCloudRain },
+    67: { weather: "Freezing Rain: Heavy intensity", icon: faCloudRain },
+    71: { weather: "Snow fall: Slight intensity", icon: faSnowflake },
+    73: { weather: "Snow fall: Moderate intensity", icon: faSnowflake },
+    75: { weather: "Snow fall: Heavy intensity", icon: faSnowflake },
+    77: { weather: "Snow grains", icon: faSnowflake },
+    80: { weather: "Rain showers: Slight intensity", icon: faCloudRain },
+    81: { weather: "Rain showers: Moderate intensity", icon: faCloudRain },
+    82: { weather: "Rain showers: Violent intensity", icon: faCloudRain },
+    85: { weather: "Snow showers slight", icon: faSnowflake },
+    86: { weather: "Snow showers heavy", icon: faSnowflake },
+    95: { weather: "Thunderstorm: Slight or moderate", icon: faCloudRain },
+    96: { weather: "Thunderstorm with slight hail", icon: faCloudRain },
+    99: { weather: "Thunderstorm with heavy hail", icon: faCloudRain },
   };
 
-  return weatherCodes[code] || "Unknown weather condition";
+  const description = weatherCodes[code];
+  if (description) {
+    return description;
+  }
+  return { weather: "Unknown weather", icon: faQuestionCircle };
 }
 
 async function getCurrentPosition(): Promise<{ lat: number; lon: number }> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      reject(new Error("Geolocation is not supported by this browser."));
+      console.warn(
+        "Geolocation is not supported by this browser. Using default coordinates."
+      );
+      resolve({ lat: 35.6895, lon: 139.6917 }); // Default to Tokyo
       return;
     }
 
@@ -69,8 +96,8 @@ async function getCurrentPosition(): Promise<{ lat: number; lon: number }> {
         });
       },
       (error) => {
-        console.log("Geolocation error, use tokyo geolocation:", error);
-        reject({ lat: 35.6895, lon: 139.6917 }); // Default to Tokyo coordinates
+        console.warn("Geolocation error, using default coordinates:", error);
+        resolve({ lat: 35.6895, lon: 139.6917 }); // Default to Tokyo
       }
     );
   });
@@ -96,13 +123,17 @@ async function getWeatherInfo(): Promise<WeatherInfo> {
     const position = await getCurrentPosition();
 
     const weatherData = await fetchWeatherData(position.lat, position.lon);
+    const weatherDescription = getWeatherDescription(
+      weatherData.current.weather_code
+    );
 
     const weatherInfo: WeatherInfo = {
       currentTemperature: weatherData.current.temperature_2m | 0,
-      currentWeather: getWeatherDescription(weatherData.current.weather_code),
+      currentWeather: weatherDescription.weather,
       todayMaxTemp: weatherData.daily.temperature_2m_max[0] | 0,
       todayMinTemp: weatherData.daily.temperature_2m_min[0] | 0,
       time: weatherData.current.time,
+      icon: weatherDescription.icon,
     };
 
     return weatherInfo;
@@ -132,6 +163,7 @@ export default function Weather() {
       <div>{data() ? `${data()?.todayMaxTemp}°C` : "Loading..."}</div>
       <div>{data() ? `${data()?.todayMinTemp}°C` : "Loading..."}</div>
       <div>{data() ? data()?.time : "Loading..."}</div>
+      <Fa icon={data()?.icon || faSpinner} />
     </div>
   );
 }
