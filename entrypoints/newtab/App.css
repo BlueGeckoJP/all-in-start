@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+html,
+body {
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: oklch(0.2749 0.0188 258.37);
+}
+
+.montserrat {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.component-box {
+  color: oklch(0.9702 0 0);
+  background-color: oklch(0.3623 0.0154 259.81);
+  border-radius: 20px;
+  margin: 1rem;
+}
