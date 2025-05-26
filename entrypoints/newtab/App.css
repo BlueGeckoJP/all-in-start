@@ -25,4 +25,5 @@ body {
   background-color: oklch(0.3623 0.0154 259.81);
   border-radius: 20px;
   margin: 1rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
 }

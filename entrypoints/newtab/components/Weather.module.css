@@ -1,0 +1,46 @@
+.weather {
+  padding: 1rem;
+  width: 24rem;
+  height: 12rem;
+}
+
+.weather > * + * {
+  margin-top: 1rem;
+}
+
+.weather-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bold-4xl {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.normal-3xl {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+
+.high-low {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.time {
+  font-size: 0.75rem;
+  text-align: end;
+  color: oklch(0.551 0.0234 264.36);
+}
+
+.text-gray-400 {
+  color: oklch(0.8687 0.0187 250.61);
+}

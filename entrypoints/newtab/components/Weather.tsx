@@ -1,3 +1,5 @@
+import styles from "./Weather.module.css";
+
 import {
   faCloud,
   faCloudSun,
@@ -157,13 +159,27 @@ export default function Weather() {
   const [data] = createResource(weather);
 
   return (
-    <div class="montserrat component-box">
-      <div>{data() ? `${data()?.currentTemperature}°C` : "Loading..."}</div>
-      <div>{data() ? data()?.currentWeather : "Loading..."}</div>
-      <div>{data() ? `${data()?.todayMaxTemp}°C` : "Loading..."}</div>
-      <div>{data() ? `${data()?.todayMinTemp}°C` : "Loading..."}</div>
-      <div>{data() ? data()?.time : "Loading..."}</div>
-      <Fa icon={data()?.icon || faSpinner} />
+    <div class={`${styles.weather} montserrat component-box`}>
+      <div class={styles["weather-main"]}>
+        <div class={styles["bold-4xl"]}>
+          {data() ? `${data()?.currentTemperature}°C` : "Loading..."}
+        </div>
+        <div class={styles["normal-3xl"]}>
+          <Fa icon={data()?.icon || faSpinner} />
+        </div>
+      </div>
+      <div class={`${styles["text-sm"]} ${styles["text-gray-400"]}`}>
+        {data() ? data()?.currentWeather : "Loading..."}
+      </div>
+      <div class={styles["high-low"]}>
+        <div class={styles["text-sm"]}>
+          High: {data() ? `${data()?.todayMaxTemp}°C` : "Loading..."}
+        </div>
+        <div class={styles["text-sm"]}>
+          Low: {data() ? `${data()?.todayMinTemp}°C` : "Loading..."}
+        </div>
+      </div>
+      <div class={styles["time"]}>{data() ? data()?.time : "Loading..."}</div>
     </div>
   );
 }
