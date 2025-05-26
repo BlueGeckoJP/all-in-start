@@ -1,5 +1,6 @@
 import "./App.css";
 import Clock from "./components/Clock";
+import Search from "./components/Search";
 import Weather from "./components/Weather";
 
 export default function App() {
@@ -7,6 +8,7 @@ export default function App() {
     <>
       <Clock />
       <Weather />
+      <Search />
     </>
   );
 }
