@@ -1,0 +1,23 @@
+.search {
+  width: 24rem;
+  height: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+}
+
+.input {
+  appearance: none;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  width: 16rem;
+  height: 4rem;
+}
